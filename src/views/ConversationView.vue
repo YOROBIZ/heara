@@ -12,7 +12,7 @@
     <main class="conversation-main">
       <!-- Mode Indicator -->
       <div class="mode-indicator">
-        <span class="mode-icon">💬</span>
+        <MessageCircle :size="24" :stroke-width="2" />
         <span class="mode-name">Conversation</span>
       </div>
 
@@ -41,9 +41,11 @@
         
         <template v-else>
           <Button variant="ghost" @click="togglePause">
+            <component :is="isRunning ? Pause : Play" :size="18" :stroke-width="2" />
             {{ isRunning ? 'Pause' : 'Resume' }}
           </Button>
           <Button variant="danger" @click="stopConversation">
+            <Square :size="18" :stroke-width="2" />
             Stop
           </Button>
         </template>
@@ -72,6 +74,7 @@
 import { ref, computed } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
+import { MessageCircle, Pause, Play, Square } from 'lucide-vue-next'
 import TimerDisplay from '@/components/TimerDisplay.vue'
 import CostCounter from '@/components/CostCounter.vue'
 import ParticipantsInput from '@/components/ParticipantsInput.vue'
@@ -163,14 +166,14 @@ function stopConversation() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   color: white;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
 }
 
-.mode-icon {
-  font-size: var(--font-size-2xl);
+.mode-indicator svg {
+  opacity: 0.9;
 }
 
 .participants-section {

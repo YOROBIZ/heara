@@ -1,19 +1,21 @@
 <template>
   <div class="participants-input">
     <button class="adjust-btn" @click="decrement" :disabled="modelValue <= min" aria-label="Decrease participants">
-      <span>−</span>
+      <Minus :size="20" :stroke-width="2.5" />
     </button>
     <div class="participants-value">
       <span class="count">{{ modelValue }}</span>
       <span class="label">{{ modelValue === 1 ? 'participant' : 'participants' }}</span>
     </div>
     <button class="adjust-btn" @click="increment" :disabled="modelValue >= max" aria-label="Increase participants">
-      <span>+</span>
+      <Plus :size="20" :stroke-width="2.5" />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Minus, Plus } from 'lucide-vue-next'
+
 const props = withDefaults(defineProps<{
   modelValue: number
   min?: number
@@ -73,11 +75,6 @@ function decrement() {
 .adjust-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-}
-
-.adjust-btn span {
-  line-height: 1;
-  display: block;
 }
 
 .participants-value {
