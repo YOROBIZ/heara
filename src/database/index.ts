@@ -1,7 +1,7 @@
 import Dexie, { Table } from 'dexie'
 
 // Session Types
-export type SessionType = 'focus' | 'deep-work' | 'meeting' | 'break'
+export type SessionType = 'focus' | 'deep-focus' | 'conversation' | 'pause'
 
 export interface Session {
     id?: number

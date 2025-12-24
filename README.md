@@ -1,18 +1,18 @@
-# CostClock
+# Heara
 
-**See what your time actually costs.**
+**Hear what truly matters.**
 
 ## 🎯 The Problem
 
-Professionals have **zero visibility** on how their time is actually spent and what it costs (financially AND cognitively). Meetings happen without accountability, deep work gets fragmented, and nobody measures the real impact.
+Professionals lose track of how their time is actually spent. Conversations drift, focus fragments, and the cost—financial and cognitive—remains invisible.
 
 ## 💡 The Solution
 
-CostClock is a smart productivity timer that:
-- **Tracks your work sessions** (Focus, Deep Work, Meetings, Breaks)
-- **Calculates meeting costs in real-time** (direct + opportunity cost)
-- **Provides behavioral analytics** (when are you actually productive?)
-- **Works offline-first** (your data never leaves your device)
+Heara is a calm productivity companion that:
+- **Observes your work sessions** (Focus, Deep Focus, Conversation, Pause)
+- **Reveals conversation costs in real-time** (direct + opportunity cost)
+- **Understands your rhythm** (when you're most focused, when to pause)
+- **Protects your privacy** (your data never leaves your device)
 
 ## 🚀 Tech Stack
 
@@ -26,9 +26,9 @@ CostClock is a smart productivity timer that:
 ## 📦 MVP Scope (LOCKED)
 
 ### ✅ IN
-- Multi-mode timer (Focus / Deep Work / Meeting / Break)
-- Meeting cost calculator (live counter)
-- Weekly analytics with simple insights
+- Multi-mode timer (Focus / Deep Focus / Conversation / Pause)
+- Conversation cost tracker (live, gentle counter)
+- Weekly insights with calm observations
 - PWA installation (iOS + Android)
 - Export/backup functionality
 
@@ -40,10 +40,10 @@ CostClock is a smart productivity timer that:
 
 ## 🏗️ Development Timeline
 
-- **Days 0-1**: Setup + Design System
+- **Days 0-1**: Setup + Design Foundation
 - **Days 1-2**: Timer Core
-- **Days 3-4**: Meeting Cost Engine (Killer Feature)
-- **Days 5-6**: Analytics MVP
+- **Days 3-4**: Conversation Cost Tracker (Core Feature)
+- **Days 5-6**: Weekly Insights
 - **Days 7-8**: PWA + Offline
 - **Days 9-10**: Quality & Edge Cases
 - **Days 10-11**: Deploy + Demo
