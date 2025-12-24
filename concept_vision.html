@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CostClock - Vision & Concept Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 3rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #1a202c;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section h4 {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .insight-box h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .mockup {
+            background: #1a202c;
+            color: #48bb78;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #68d391;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border-left: 4px solid #48bb78;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .phase-timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .phase-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .phase-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .phase-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
+        .phase-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            color: #4a5568;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #fef5e7 0%, #fff9e6 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .footer {
+            background: #1a202c;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏱️ CostClock</h1>
+            <p class="tagline">L'Operating System de la Productivité</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Document de Vision & Analyse Conceptuelle</p>
+        </div>
+
+        <div class="content">
+            <!-- Introduction -->
+            <div class="section">
+                <h2><span class="emoji">🧠</span>Réflexion Approfondie : Fusion des Concepts</h2>
+                <p>Déconstruction et analyse de deux idées complémentaires pour créer un outil de productivité
+                    révolutionnaire.</p>
+            </div>
+
+            <!-- L'Insight Clé -->
+            <div class="insight-box">
+                <h3>💡 L'Insight Clé : Deux faces d'un même problème</h3>
+                <p><strong>Le vrai problème :</strong> Les professionnels n'ont <strong>aucune visibilité</strong> sur
+                    comment leur temps est réellement dépensé et combien ça coûte (financièrement ET cognitivement).</p>
+            </div>
+
+            <!-- Analyse Profonde -->
+            <div class="section">
+                <h2><span class="emoji">🔍</span>Analyse Profonde</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>MeetSmart - Problème Collectif</h4>
+                        <ul>
+                            <li>Une réunion de 1h avec 8 personnes à 50k€/an = <strong>~200€ partis en fumée</strong>
+                            </li>
+                            <li>Coût invisible : interruption de flow, context switching, fatigue décisionnelle</li>
+                            <li>Les managers n'ont <strong>aucune data</strong> pour justifier l'annulation de meetings
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>FocusFlow - Problème Individuel</h4>
+                        <ul>
+                            <li>6 Pomodoros sans savoir si tu es plus productif le matin ou l'après-midi</li>
+                            <li>Pas de visibilité sur l'impact des réunions sur ta capacité de deep work</li>
+                            <li>Aucune corrélation entre efforts et résultats mesurables</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vision Unifiée -->
+            <div class="section">
+                <h2><span class="emoji">🚀</span>Vision Unifiée : WorkIQ - L'OS de la Productivité</h2>
+
+                <h3>Concept Fusion</h3>
+                <p>Un <strong>Operating System de Productivité</strong> qui combine :</p>
+                <ul>
+                    <li><strong>Timer intelligent</strong> (Pomodoro + Meeting tracker)</li>
+                    <li><strong>Analytics comportementales</strong> (quand es-tu vraiment productif ?)</li>
+                    <li><strong>Coût financier en temps réel</strong> (combien coûte chaque activité ?)</li>
+                    <li><strong>Intelligence prédictive</strong> (recommandations basées sur patterns)</li>
+                </ul>
+            </div>
+
+            <!-- Features Niveau 1 -->
+            <div class="section">
+                <h2><span class="emoji">🎯</span>Features Niveau 1 : Les Fondations</h2>
+
+                <h3>Module 1 : Smart Timer</h3>
+                <div class="mockup">
+                    ┌─────────────────────────────────┐
+                    │ 🎯 DEEP WORK │
+                    │ ⏱️ 23:45 / 25:00 │
+                    │ 💰 Coût opportunité: 18.50€ │
+                    │ 📊 Streak: 3/8 aujourd'hui │
+                    └─────────────────────────────────┘
+                </div>
+
+                <h4>Modes multiples :</h4>
+                <ul>
+                    <li><strong>Focus</strong> : Pomodoro classique (25/5)</li>
+                    <li><strong>Deep Work</strong> : Sessions longues (90/20)</li>
+                    <li><strong>Meeting</strong> : Timer avec calcul de coût en temps réel</li>
+                    <li><strong>Break</strong> : Pauses trackées pour mesurer le recovery time</li>
+                </ul>
+
+                <div class="highlight">
+                    <strong>La différence :</strong> Le timer sait <strong>quel type de travail</strong> tu fais
+                    (réunion vs deep work vs admin) et calcule différemment.
+                </div>
+
+                <h3>Module 2 : Meeting Cost Calculator (Niveau Pro)</h3>
+                <p>Au lieu d'un simple timer, un <strong>vrai dashboard de meeting</strong> :</p>
+
+                <div class="code-block">
+                    // Calcul intelligent du coût
+                    const meetingCost = {
+                    directCost: participantSalaries * duration,
+                    opportunityCost: lostFocusTime * productivity_coefficient,
+                    cognitiveCost: contextSwitch_penalty * participants,
+                    totalCost: direct + opportunity + cognitive
+                    }
+                </div>
+
+                <h4>Features avancées :</h4>
+                <ul>
+                    <li><strong>Pré-meeting Justification</strong> : Avant de lancer le timer, tu dois dire "pourquoi
+                        cette réunion ?"</li>
+                    <li><strong>Live Cost Display</strong> : Affichage en temps réel qui monte pendant la réunion
+                        (psychologique ++)</li>
+                    <li><strong>Post-Meeting ROI</strong> : "Cette réunion était-elle worth it ?" (vote rapide)</li>
+                    <li><strong>Meeting Score</strong> : Calcul automatique si la réunion était productive (durée vs
+                        nombre de décisions prises)</li>
+                </ul>
+
+                <h4>Exemple UI pendant meeting :</h4>
+                <div class="mockup">
+                    ┌─────────────────────────────────────┐
+                    │ 🏢 Product Roadmap Meeting │
+                    │ ⏱️ 47:23 │
+                    │ 👥 6 participants │
+                    │ │
+                    │ 💸 Coût actuel: 287.50 € │
+                    │ 📈 +6.07 €/min │
+                    │ │
+                    │ ⚠️ Temps optimal dépassé (-12 min) │
+                    │ 💡 Suggestion: Conclure maintenant │
+                    └─────────────────────────────────────┘
+                </div>
+
+                <h3>Module 3 : Analytics Comportementales</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>1. Energy Mapping</h4>
+                        <ul>
+                            <li>Graphique de tes niveaux d'énergie par heure</li>
+                            <li>Corrélation sommeil et productivité</li>
+                            <li>Identification automatique des "golden hours"</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>2. Deep Work Capacity</h4>
+                        <ul>
+                            <li>Combien d'heures de deep work par jour (max ~4h)</li>
+                            <li>Évolution de la capacité de concentration</li>
+                            <li>Impact des réunions sur le focus</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>3. Meeting Impact Analysis</h4>
+                        <div class="mockup" style="font-size: 0.8rem; margin-top: 0.5rem;">
+                            📊 Semaine dernière
+
+                            ⏰ Temps total: 12.5h
+                            💰 Coût: 2,450€
+
+                            ⚠️ 68% des réunions avant 11h
+                            Deep work après meetings: -34%
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>4. Productivity Patterns</h4>
+                        <ul>
+                            <li>Heatmap hebdomadaire</li>
+                            <li>Corrélation activités/résultats</li>
+                            <li>Prédictions intelligentes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Niveau 2 -->
+            <div class="section">
+                <h2><span class="emoji">🎯</span>Features Niveau 2 : L'Intelligence</h2>
+
+                <h3>1. AI Recommendations (sans API payante)</h3>
+                <p>Utiliser un algorithme local simple :</p>
+
+                <div class="code-block">
+                    // Analyse de patterns
+                    const insights = {
+                    bestTimeForDeepWork: analyzePeakPerformance(sessions),
+                    meetingOptimalDuration: calculateOptimalLength(historical_meetings),
+                    burnoutRisk: detectBurnoutPatterns(weekly_data),
+                    suggestions: generateActionableInsights(all_data)
+                    }
+                </div>
+
+                <h4>Exemples de recommandations :</h4>
+                <div class="success">
+                    <p>✅ "Tu as 4 réunions demain matin. Risque de fatigue décisionnelle élevé. Déplace 2 réunions à
+                        jeudi."</p>
+                </div>
+                <div class="success">
+                    <p>✅ "Tes meilleures sessions de deep work sont le mardi entre 14h-16h. Bloque ce créneau la semaine
+                        prochaine."</p>
+                </div>
+                <div class="warning">
+                    <p>⚠️ "Tu n'as fait que 2h de deep work cette semaine (vs 8h de meetings). Risque de stagnation."
+                    </p>
+                </div>
+
+                <h3>2. Gamification Intelligente</h3>
+                <p>Pas juste des badges débiles, mais des <strong>métriques qui motivent</strong> :</p>
+
+                <div class="mockup">
+                    🎯 Tes Stats de la Semaine
+
+                    💎 Deep Work Streak: 5 jours (record: 12)
+                    ⚡ Total Focus Time: 18.5h (+12% vs semaine dernière)
+                    💰 Coût meetings évités: 890€ (3 meetings annulés)
+                    🧠 Cognitive Load: 67% (optimal: 60-70%)
+
+                    🏆 Achievement débloqué:
+                    "Flow Master" - 3 sessions de 90min+ cette semaine
+                </div>
+
+                <h3>3. Team Mode (Feature Killer)</h3>
+                <p><strong>Le vrai différenciateur :</strong> Mode équipe pour les managers</p>
+
+                <h4>Dashboard Manager :</h4>
+                <div class="mockup">
+                    📊 Vue d'Équipe - Semaine 51
+
+                    👥 Équipe Engineering (8 personnes)
+
+                    ⏰ Temps total en réunion: 67h
+                    💰 Coût: 8,450€
+                    📉 Deep Work moyen/personne: 11.2h (-23% vs target)
+
+                    ⚠️ Alertes:
+                    - 3 personnes en dessous de 8h de deep work
+                    - Meeting "Weekly Sync" a un ROI de 23% (consider async)
+                    - Jeudi = jour le plus fragmenté (6 meetings en moyenne)
+
+                    💡 Recommandations:
+                    1. Instaurer "No Meeting Thursday"
+                    2. Remplacer "Daily Standup" par update Slack
+                    3. Bloquer 9h-12h pour focus work collectif
+                </div>
+            </div>
+
+            <!-- UX/UI -->
+            <div class="section">
+                <h2><span class="emoji">🎨</span>UX/UI : Ce qui rend ça viral</h2>
+
+                <h3>1. Visualisations Choc</h3>
+
+                <h4>La Jauge de Meeting en temps réel :</h4>
+                <ul>
+                    <li>Une barre qui se remplit comme une <strong>jauge d'essence</strong></li>
+                    <li>À 30min : verte ✅</li>
+                    <li>À 45min : orange ⚠️</li>
+                    <li>À 60min : rouge 🔴 + warning sonore (optional)</li>
+                </ul>
+
+                <h4>Le Calendar Heatmap :</h4>
+                <ul>
+                    <li>Ton agenda visualisé en heatmap (vert = deep work, rouge = meetings)</li>
+                    <li>Tu vois instantanément si ta semaine est "saine" ou "fragmentée"</li>
+                </ul>
+
+                <h4>Le "Time Money Converter" :</h4>
+                <ul>
+                    <li>Un compteur style <strong>bourse en temps réel</strong> qui affiche le coût d'une réunion qui
+                        monte</li>
+                    <li>Effet psychologique énorme quand tu vois "+12.50€... +18.75€... +25.00€"</li>
+                </ul>
+
+                <h3>2. Onboarding Intelligent</h3>
+                <p>Pas un simple formulaire, mais une <strong>expérience</strong> :</p>
+
+                <ol>
+                    <li><strong>Scan de Calendar</strong> (Google/Outlook API gratuit)
+                        <ul>
+                            <li>"Analyse de tes 2 dernières semaines..."</li>
+                            <li>Génération automatique d'un rapport : "Tu as passé 18h en réunion (32% de ton temps)"
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>Salary Estimator</strong> (optionnel mais puissant)
+                        <ul>
+                            <li>"Entre ton salaire annuel (ou choisis une moyenne pour ton poste)"</li>
+                            <li>Calcul automatique du coût horaire</li>
+                        </ul>
+                    </li>
+                    <li><strong>Goal Setting</strong>
+                        <ul>
+                            <li>"Combien d'heures de deep work veux-tu par semaine ?"</li>
+                            <li>"Quel est ton maximum acceptable de temps en réunion ?"</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Stack Technique -->
+            <div class="section">
+                <h2><span class="emoji">🛠️</span>Stack Technique Optimisée</h2>
+
+                <div class="tech-stack">
+                    <span class="tech-badge">Vue 3 + Vite</span>
+                    <span class="tech-badge">Pinia (State)</span>
+                    <span class="tech-badge">Chart.js + D3.js</span>
+                    <span class="tech-badge">Workbox (PWA)</span>
+                    <span class="tech-badge">IndexedDB + Dexie.js</span>
+                    <span class="tech-badge">FullCalendar</span>
+                </div>
+
+                <h3>Pourquoi cette stack ?</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Vue 3 + Vite</h4>
+                        <ul>
+                            <li>Plus léger que Next.js</li>
+                            <li>Composition API parfaite pour state complexe</li>
+                            <li>Vite = build ultra-rapide</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>Pinia (State Management)</h4>
+                        <ul>
+                            <li>Alternative moderne à Vuex</li>
+                            <li>TypeScript support</li>
+                            <li>Perfect pour tracker les sessions</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>IndexedDB (Dexie.js)</h4>
+                        <ul>
+                            <li>LocalStorage = limite de 5-10MB</li>
+                            <li>IndexedDB = plusieurs GB disponibles</li>
+                            <li>Queries complexes possibles</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>PWA (Workbox)</h4>
+                        <ul>
+                            <li>Service Worker pour offline</li>
+                            <li>Push notifications</li>
+                            <li>Install on mobile = app-like</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Schema de données (IndexedDB)</h3>
+                <div class="code-block">
+                    // Schema de données
+                    const db = new Dexie('CostClock');
+                    db.version(1).stores({
+                    sessions: '++id, type, startTime, duration, cost, quality',
+                    meetings: '++id, participants, cost, roi, notes',
+                    analytics: '++id, date, deepWorkHours, meetingHours, productivity'
+                    });
+                </div>
+            </div>
+
+            <!-- Métriques de Succès -->
+            <div class="section">
+                <h2><span class="emoji">📊</span>Métriques de Succès</h2>
+
+                <h3>Viralité potentielle :</h3>
+                <ol>
+                    <li><strong>Screenshot bait</strong> : Les gens vont partager leurs stats sur LinkedIn
+                        <ul>
+                            <li>"Cette semaine j'ai économisé 1,200€ en annulant 3 meetings inutiles"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Controversy</strong> : Le coût affiché en réunion = conversation starter</li>
+                    <li><strong>Team adoption</strong> : Un manager adopte → toute l'équipe suit</li>
+                </ol>
+
+                <h3>Proof of Value :</h3>
+                <ul>
+                    <li>"X heures de deep work trackées"</li>
+                    <li>"X€ de coût de réunions visualisés"</li>
+                    <li>"X insights générés"</li>
+                </ul>
+            </div>
+
+            <!-- MVP vs Full Vision -->
+            <div class="section">
+                <h2><span class="emoji">🎯</span>MVP vs Full Vision</h2>
+
+                <div class="phase-timeline">
+                    <div class="phase-item">
+                        <h4>Phase 1 - MVP (1-2 semaines)</h4>
+                        <ul>
+                            <li>✅ Timer multi-mode (Focus / Meeting / Break)</li>
+                            <li>✅ Calcul de coût basique pour meetings</li>
+                            <li>✅ Stockage local des sessions</li>
+                            <li>✅ Analytics simples (chart hebdomadaire)</li>
+                            <li>✅ Design moderne et responsive</li>
+                        </ul>
+                    </div>
+
+                    <div class="phase-item">
+                        <h4>Phase 2 - Intelligence (2-3 semaines)</h4>
+                        <ul>
+                            <li>✅ Recommandations basées sur patterns</li>
+                            <li>✅ Heatmap de productivité</li>
+                            <li>✅ Meeting ROI tracking</li>
+                            <li>✅ Calendar integration</li>
+                        </ul>
+                    </div>
+
+                    <div class="phase-item">
+                        <h4>Phase 3 - Viral (optionnel)</h4>
+                        <ul>
+                            <li>✅ Team mode</li>
+                            <li>✅ Shareable stats (LinkedIn cards)</li>
+                            <li>✅ Export de rapports PDF</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Le Nom Final -->
+            <div class="section">
+                <h2><span class="emoji">💎</span>Le Nom Final</h2>
+
+                <p>Propositions :</p>
+                <ul>
+                    <li><strong>FlowCost</strong></li>
+                    <li><strong>TimeIQ</strong></li>
+                    <li><strong>CostFlow</strong></li>
+                </ul>
+
+                <div class="insight-box">
+                    <h3>Meilleur choix : CostClock</h3>
+                    <ul>
+                        <li>✅ Simple, mémorable</li>
+                        <li>✅ Dit exactement ce que ça fait</li>
+                        <li>✅ Domain probablement dispo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2><span class="emoji">🚀</span>Prochaines Étapes</h2>
+
+                <div class="highlight">
+                    <h4>Plan d'Action :</h4>
+                    <ol>
+                        <li>Créer l'architecture du projet</li>
+                        <li>Développer le MVP fonctionnel en priorité</li>
+                        <li>Ajouter l'intelligence progressivement</li>
+                        <li>Itérer basé sur le feedback</li>
+                    </ol>
+                </div>
+
+                <div class="success">
+                    <p><strong>Objectif principal :</strong> Créer un outil si utile et visuellement impressionnant
+                        qu'il devient un incontournable dans ton portfolio LinkedIn et attire l'attention des
+                        recruteurs.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📅 Document créé le 24 Décembre 2024</p>
+            <p>🎯 Objectif : Premier emploi dans la Tech</p>
+            <p>💪 Budget : 0-10 USD max</p>
+        </div>
+    </div>
+</body>
+
+</html>
