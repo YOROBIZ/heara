@@ -1,8 +1,8 @@
 <template>
   <div class="weekly-summary">
     <div class="summary-header">
-      <h3 class="summary-title">Weekly Mirror</h3>
-      <p class="summary-subtitle">Mon {{ formatDate(range.start) }} — Sun {{ formatDate(range.end) }}</p>
+      <h3 class="summary-title">Last 7 Days</h3>
+      <p class="summary-subtitle">{{ formatDate(range.start) }} — {{ formatDate(range.end) }}</p>
     </div>
 
     <div v-if="isLoading" class="summary-loading">
@@ -70,9 +70,10 @@ const {
 } = storeToRefs(analyticsStore)
 
 // Fetch range for display
-const range = analyticsStore.currentWeekRange
+const range = analyticsStore.last7DaysRange
 
 onMounted(() => {
+  console.log('[WeeklySummary] Component mounted, loading data...')
   analyticsStore.loadWeeklyData()
 })
 

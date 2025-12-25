@@ -7,21 +7,17 @@ export const useAnalyticsStore = defineStore('analytics', () => {
     const weeklySessions = ref<Session[]>([])
     const isLoading = ref(false)
 
-    // Calculate current week (Monday 00:00 to Sunday 23:59)
-    const currentWeekRange = computed(() => {
+    // Calculate last 7 days (rolling window - shows data immediately!)
+    const last7DaysRange = computed(() => {
         const now = new Date()
-        const day = now.getDay() // 0 (Sun) to 6 (Sat)
-        const diff = day === 0 ? -6 : 1 - day // Days to subtract to get to Monday
+        now.setHours(23, 59, 59, 999) // End of today
 
-        const monday = new Date(now)
-        monday.setDate(now.getDate() + diff)
-        monday.setHours(0, 0, 0, 0)
+        const sevenDaysAgo = new Date(now)
+        sevenDaysAgo.setDate(now.getDate() - 6) // 7 days total (including today)
+        sevenDaysAgo.setHours(0, 0, 0, 0)
 
-        const sunday = new Date(monday)
-        sunday.setDate(monday.getDate() + 6)
-        sunday.setHours(23, 59, 59, 999)
-
-        return { start: monday, end: sunday }
+        console.log('[Analytics] Date range:', sevenDaysAgo, 'to', now)
+        return { start: sevenDaysAgo, end: now }
     })
 
     // Meeting time in seconds
@@ -84,8 +80,8 @@ export const useAnalyticsStore = defineStore('analytics', () => {
     async function loadWeeklyData() {
         isLoading.value = true
         try {
-            const { start, end } = currentWeekRange.value
-            console.log('[Analytics] Loading data for week:', start, 'to', end)
+            const { start, end } = last7DaysRange.value
+            console.log('[Analytics] Loading data for last 7 days:', start, 'to', end)
             weeklySessions.value = await getSessionsForDateRange(start, end)
             console.log('[Analytics] Loaded sessions:', weeklySessions.value.length, weeklySessions.value)
         } catch (error) {
@@ -98,7 +94,7 @@ export const useAnalyticsStore = defineStore('analytics', () => {
     return {
         weeklySessions,
         isLoading,
-        currentWeekRange,
+        last7DaysRange,
         meetingTime,
         focusTime,
         totalMeetingCost,
