@@ -84,13 +84,15 @@ export async function updateSession(id: number, updates: Partial<Session>): Prom
 
 /**
  * Get the last incomplete session (if any)
+ * FIXED: Use filter instead of IndexedDB where clause for boolean
  */
 export async function getIncompleteSession(): Promise<Session | undefined> {
-    return await db.sessions
-        .where('isCompleted')
-        .equals(0) // false = 0 in IndexedDB
-        .reverse()
-        .first()
+    const sessions = await db.sessions.toArray()
+    const incomplete = sessions
+        .filter(s => !s.isCompleted)
+        .sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
+
+    return incomplete[0]
 }
 
 /**
@@ -105,14 +107,14 @@ export async function completeSession(id: number): Promise<void> {
 
 /**
  * Get recent completed sessions (limit = 10 by default)
+ * FIXED: Use filter instead of IndexedDB where clause for boolean
  */
 export async function getRecentSessions(limit: number = 10): Promise<Session[]> {
-    return await db.sessions
-        .where('isCompleted')
-        .equals(1) // true = 1 in IndexedDB
-        .reverse()
-        .limit(limit)
-        .toArray()
+    const sessions = await db.sessions.toArray()
+    return sessions
+        .filter(s => s.isCompleted)
+        .sort((a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0))
+        .slice(0, limit)
 }
 
 /**
