@@ -9,31 +9,10 @@ export default defineConfig({
         vue(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
-            manifest: {
-                name: 'CostClock',
-                short_name: 'CostClock',
-                description: 'See what your time actually costs',
-                theme_color: '#667eea',
-                background_color: '#ffffff',
-                display: 'standalone',
-                scope: '/',
-                start_url: '/',
-                icons: [
-                    {
-                        src: '/icon-192x192.png',
-                        sizes: '192x192',
-                        type: 'image/png'
-                    },
-                    {
-                        src: '/icon-512x512.png',
-                        sizes: '512x512',
-                        type: 'image/png'
-                    }
-                ]
-            },
+            includeAssets: ['icon-192.svg', 'icon-512.svg'],
+            manifest: false, // Use public/manifest.json instead
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+                globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
                 runtimeCaching: [
                     {
                         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

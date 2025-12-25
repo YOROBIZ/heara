@@ -159,6 +159,9 @@
         </div>
       </div>
     </div>
+
+    <!-- PWA Install Prompt -->
+    <InstallPrompt />
   </div>
 </template>
 
@@ -170,6 +173,7 @@ import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, BarChart2
 import { completeSession } from '@/database'
 import SessionHistory from '@/components/SessionHistory.vue'
 import WeeklySummary from '@/components/WeeklySummary.vue'
+import InstallPrompt from '@/components/InstallPrompt.vue'
 
 const timerStore = useTimerStore()
 const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
