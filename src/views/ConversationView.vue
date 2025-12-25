@@ -1,5 +1,15 @@
 <template>
-  <div class="conversation-view">\r\n    <!-- History Modal Overlay -->\r\n    <div v-if="showHistory" class="history-overlay" @click="closeHistory">\r\n      <div class="history-modal" @click.stop>\r\n        <button class="history-close" @click="closeHistory" aria-label="Close history">\r\n          <X :size="20" :stroke-width="2" />\r\n        </button>\r\n        <SessionHistory />\r\n      </div>\r\n    </div>\r\n
+  <div class="conversation-view">
+    <!-- History Modal Overlay -->
+    <div v-if="showHistory" class="history-overlay" @click="closeHistory">
+      <div class="history-modal" @click.stop>
+        <button class="history-close" @click="closeHistory" aria-label="Close history">
+          <X :size="20" :stroke-width="2" />
+        </button>
+        <SessionHistory />
+      </div>
+    </div>
+
     <!-- Main Card (Glassmorphism with deep shadow) -->
     <div class="conversation-card">
       <!-- Header -->
@@ -7,7 +17,14 @@
         <div class="brand">
           <h1 class="brand-name">Heara</h1>
           <p class="brand-tagline">Hear what truly matters</p>
-        </div>\r\n        <button class="history-btn" @click="showHistory = true" aria-label="View history">\r\n          <Clock :size="18" :stroke-width="2" />\r\n          <span>History</span>\r\n        </button>\r\n      </div>\r\n\r\n      <!-- Mode Indicator -->
+        </div>
+        <button class="history-btn" @click="showHistory = true" aria-label="View history">
+          <Clock :size="18" :stroke-width="2" />
+          <span>History</span>
+        </button>
+      </div>
+
+      <!-- Mode Indicator -->
       <div class="mode-bar">
         <div class="mode-info">
           <MessageCircle :size="16" :stroke-width="2" class="mode-icon" />
@@ -121,7 +138,10 @@
           />
         </label>
         <p class="settings-hint">Used to calculate conversation cost</p>
-        <p class="settings-device-hint">💾 Saved on this device</p>
+        <div class="settings-device-hint">
+          <HardDrive :size="14" :stroke-width="2" />
+          <span>Saved on this device</span>
+        </div>
       </div>
     </div>
   </div>
@@ -132,7 +152,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
 import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X } from 'lucide-vue-next'
-import { completeSession } from '@/database'\r\nimport SessionHistory from '@/components/SessionHistory.vue'
+import { completeSession } from '@/database'
+import SessionHistory from '@/components/SessionHistory.vue'
 
 const timerStore = useTimerStore()
 const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
@@ -141,7 +162,8 @@ const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
 const participants = ref(4)
 const hourlyRate = ref<number | null>(50)
 const showRestoreBanner = ref(false)
-const restoredSessionId = ref<number | null>(null)\r\nconst showHistory = ref(false)
+const restoredSessionId = ref<number | null>(null)
+const showHistory = ref(false)
 
 // Load last session on mount
 onMounted(async () => {
@@ -226,7 +248,12 @@ async function dismissRestore() {
   }
   participants.value = 4
   hourlyRate.value = 50
-}\r\n\r\nfunction closeHistory() {\r\n  showHistory.value = false\r\n}\r\n</script>
+}
+
+function closeHistory() {
+  showHistory.value = false
+}
+</script>
 
 <style scoped>
 .conversation-view {
@@ -236,6 +263,57 @@ async function dismissRestore() {
   align-items: center;
   justify-content: center;
   padding: var(--space-6);
+}
+
+/* History Modal Overlay */
+.history-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.history-modal {
+  background: linear-gradient(180deg, #8b9ce8 0%, #6a7dd4 50%, #5264c4 100%);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.history-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  z-index: 10;
+}
+
+.history-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
 }
 
 /* Main Card - Glassmorphism with deep shadow */
@@ -262,6 +340,32 @@ async function dismissRestore() {
 .card-header {
   text-align: center;
   margin-bottom: var(--space-6);
+  position: relative;
+}
+
+.history-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: var(--space-2) var(--space-3);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.history-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transform: translateY(-1px);
 }
 
 .brand-name {
@@ -761,8 +865,3 @@ async function dismissRestore() {
   }
 }
 </style>
-
-
-
-
-
