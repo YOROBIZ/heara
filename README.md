@@ -34,19 +34,6 @@ The application is built as a Progressive Web App (PWA) with a "Local-First" arc
 ## Technology Stack
 
 ### Core
-- **Vue 3**: Progressive JavaScript framework for building the user interface.
-- **TypeScript**: Ensures type safety and code reliability across the application.
-- **Vite**: Next-generation frontend tooling for fast development and optimized production builds.
-
-### State & Persistence
-- **Pinia**: Intuitive, type-safe state management for Vue.
-- **Dexie.js**: A wrapper for IndexedDB, providing a robust local database for session history.
-
-### Testing & Quality
-- **Vitest**: Blazing fast unit test framework used to verify critical logic (cost calculations, data validation).
-- **ESLint**: Maintains code quality and consistency.
-
-## Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
