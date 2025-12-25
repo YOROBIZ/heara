@@ -30,7 +30,7 @@
         </div>
         <div class="header-actions">
           <button class="history-btn" @click="showInsights = true" aria-label="View insights" title="Weekly Insights">
-            <Sparkles :size="16" :stroke-width="2" />
+            <BarChart2 :size="16" :stroke-width="2" />
           </button>
           <button class="history-btn" @click="showHistory = true" aria-label="View history">
             <Clock :size="18" :stroke-width="2" />
@@ -166,7 +166,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
-import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, Sparkles } from 'lucide-vue-next'
+import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, BarChart2 } from 'lucide-vue-next'
 import { completeSession } from '@/database'
 import SessionHistory from '@/components/SessionHistory.vue'
 import WeeklySummary from '@/components/WeeklySummary.vue'
