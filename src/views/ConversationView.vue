@@ -134,7 +134,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
-import { MessageCircle, Pause, Play, Minus, Plus } from 'lucide-vue-next'
+import { MessageCircle, Pause, Play, Minus, Plus, HardDrive } from 'lucide-vue-next'
 import { completeSession } from '@/database'
 
 const timerStore = useTimerStore()
@@ -700,6 +700,10 @@ async function dismissRestore() {
   text-align: center;
   margin-top: var(--space-3);
   font-weight: var(--font-weight-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
 }
 
 @media (max-width: 480px) {
@@ -761,4 +765,7 @@ async function dismissRestore() {
   }
 }
 </style>
+
+
+
 
