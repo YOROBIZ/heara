@@ -1,5 +1,5 @@
 <template>
-  <div class="conversation-view">
+  <div class="conversation-view">\r\n    <!-- History Modal Overlay -->\r\n    <div v-if="showHistory" class="history-overlay" @click="closeHistory">\r\n      <div class="history-modal" @click.stop>\r\n        <button class="history-close" @click="closeHistory" aria-label="Close history">\r\n          <X :size="20" :stroke-width="2" />\r\n        </button>\r\n        <SessionHistory />\r\n      </div>\r\n    </div>\r\n
     <!-- Main Card (Glassmorphism with deep shadow) -->
     <div class="conversation-card">
       <!-- Header -->
@@ -7,10 +7,7 @@
         <div class="brand">
           <h1 class="brand-name">Heara</h1>
           <p class="brand-tagline">Hear what truly matters</p>
-        </div>
-      </div>
-
-      <!-- Mode Indicator -->
+        </div>\r\n        <button class="history-btn" @click="showHistory = true" aria-label="View history">\r\n          <Clock :size="18" :stroke-width="2" />\r\n          <span>History</span>\r\n        </button>\r\n      </div>\r\n\r\n      <!-- Mode Indicator -->
       <div class="mode-bar">
         <div class="mode-info">
           <MessageCircle :size="16" :stroke-width="2" class="mode-icon" />
@@ -134,8 +131,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
-import { MessageCircle, Pause, Play, Minus, Plus, HardDrive } from 'lucide-vue-next'
-import { completeSession } from '@/database'
+import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X } from 'lucide-vue-next'
+import { completeSession } from '@/database'\r\nimport SessionHistory from '@/components/SessionHistory.vue'
 
 const timerStore = useTimerStore()
 const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
@@ -144,7 +141,7 @@ const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
 const participants = ref(4)
 const hourlyRate = ref<number | null>(50)
 const showRestoreBanner = ref(false)
-const restoredSessionId = ref<number | null>(null)
+const restoredSessionId = ref<number | null>(null)\r\nconst showHistory = ref(false)
 
 // Load last session on mount
 onMounted(async () => {
@@ -229,8 +226,7 @@ async function dismissRestore() {
   }
   participants.value = 4
   hourlyRate.value = 50
-}
-</script>
+}\r\n\r\nfunction closeHistory() {\r\n  showHistory.value = false\r\n}\r\n</script>
 
 <style scoped>
 .conversation-view {
@@ -765,6 +761,7 @@ async function dismissRestore() {
   }
 }
 </style>
+
 
 
 
