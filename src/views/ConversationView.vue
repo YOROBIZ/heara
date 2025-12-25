@@ -19,6 +19,20 @@
         <span class="participants-count">{{ participants }} participants</span>
       </div>
 
+      <!-- Restore Session Banner (shown when incomplete session exists) -->
+      <div v-if="showRestoreBanner" class="restore-banner">
+        <p class="restore-message">Resume last conversation?</p>
+        <div class="restore-actions">
+          <button class="btn-restore" @click="doRestoreSession">
+            <Play :size="16" :stroke-width="2" />
+            Resume
+          </button>
+          <button class="btn-dismiss" @click="dismissRestore">
+            Start fresh
+          </button>
+        </div>
+      </div>
+
       <!-- Timer (Hero Element) -->
       <div class="timer-hero">
         <div class="timer-display">{{ formattedTime }}</div>
@@ -110,23 +124,39 @@
           />
         </label>
         <p class="settings-hint">Used to calculate conversation cost</p>
+        <p class="settings-device-hint">💾 Saved on this device</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
 import { MessageCircle, Pause, Play, Minus, Plus } from 'lucide-vue-next'
+import { completeSession } from '@/database'
 
 const timerStore = useTimerStore()
-const { isRunning, elapsedTime } = storeToRefs(timerStore)
+const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
 
 // Local state
 const participants = ref(4)
 const hourlyRate = ref<number | null>(50)
+const showRestoreBanner = ref(false)
+const restoredSessionId = ref<number | null>(null)
+
+// Load last session on mount
+onMounted(async () => {
+  const lastSession = await timerStore.loadLastSession()
+  if (lastSession) {
+    showRestoreBanner.value = true
+    restoredSessionId.value = lastSession.id || null
+    // Update local state from restored session
+    participants.value = lastSession.participants
+    hourlyRate.value = lastSession.hourlyRate
+  }
+})
 
 // Computed
 const formattedTime = computed(() => {
@@ -155,6 +185,7 @@ const showObservation = computed(() => {
 // Methods
 function startConversation() {
   if (!hourlyRate.value) return
+  showRestoreBanner.value = false
   timerStore.startTimer('conversation', participants.value, hourlyRate.value)
 }
 
@@ -176,6 +207,28 @@ function incrementParticipants() {
 
 function decrementParticipants() {
   if (participants.value > 1) participants.value--
+}
+
+// Restore methods
+function doRestoreSession() {
+  showRestoreBanner.value = false
+  // Session is already restored in store, just hide banner
+  // User can click Resume to continue
+}
+
+async function dismissRestore() {
+  showRestoreBanner.value = false
+  // Mark the restored session as complete
+  if (restoredSessionId.value) {
+    await completeSession(restoredSessionId.value)
+  }
+  // Reset to clean state
+  elapsedTime.value = 0
+  if (currentSessionId.value) {
+    currentSessionId.value = null
+  }
+  participants.value = 4
+  hourlyRate.value = 50
 }
 </script>
 
@@ -262,6 +315,68 @@ function decrementParticipants() {
   font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.8);
   font-weight: var(--font-weight-medium);
+}
+
+/* Restore Session Banner */
+.restore-banner {
+  background: rgba(102, 126, 234, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  text-align: center;
+}
+
+.restore-message {
+  font-size: var(--font-size-sm);
+  color: white;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-3);
+}
+
+.restore-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-restore {
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.btn-restore:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-dismiss {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: underline;
+}
+
+.btn-dismiss:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Timer Hero - Massive focal point */
@@ -397,31 +512,6 @@ function decrementParticipants() {
 }
 
 .btn-circular-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Primary Begin Button (OLD - can be removed) */
-.btn-primary {
-  min-width: 140px;
-  padding: var(--space-4) var(--space-8);
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  border: none;
-  border-radius: 24px;
-  color: white;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
-}
-
-.btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -604,6 +694,14 @@ function decrementParticipants() {
   font-weight: var(--font-weight-normal);
 }
 
+.settings-device-hint {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin-top: var(--space-3);
+  font-weight: var(--font-weight-normal);
+}
+
 @media (max-width: 480px) {
   .conversation-view {
     padding: var(--space-4);
@@ -629,7 +727,6 @@ function decrementParticipants() {
   }
 
   .btn-circular,
-  .btn-primary,
   .btn-stop {
     width: 100%;
     max-width: 280px;
@@ -663,5 +760,4 @@ function decrementParticipants() {
     margin: var(--space-8) 0 var(--space-6);
   }
 }
-
 </style>
