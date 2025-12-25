@@ -11,9 +11,10 @@ export const useAnalyticsStore = defineStore('analytics', () => {
     const currentWeekRange = computed(() => {
         const now = new Date()
         const day = now.getDay() // 0 (Sun) to 6 (Sat)
-        const diff = now.getDate() - day + (day === 0 ? -6 : 1) // Adjust to Monday
+        const diff = day === 0 ? -6 : 1 - day // Days to subtract to get to Monday
 
-        const monday = new Date(now.setDate(diff))
+        const monday = new Date(now)
+        monday.setDate(now.getDate() + diff)
         monday.setHours(0, 0, 0, 0)
 
         const sunday = new Date(monday)
@@ -84,7 +85,9 @@ export const useAnalyticsStore = defineStore('analytics', () => {
         isLoading.value = true
         try {
             const { start, end } = currentWeekRange.value
+            console.log('[Analytics] Loading data for week:', start, 'to', end)
             weeklySessions.value = await getSessionsForDateRange(start, end)
+            console.log('[Analytics] Loaded sessions:', weeklySessions.value.length, weeklySessions.value)
         } catch (error) {
             console.error('Failed to load weekly analytics:', error)
         } finally {
