@@ -1,16 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Session, SessionType } from '@/database'
+import type { SessionType } from '@/database'
+import {
+    saveSession,
+    updateSession,
+    completeSession,
+    getIncompleteSession
+} from '@/database'
 
 export const useTimerStore = defineStore('timer', () => {
     // State
-    const currentSession = ref<Session | null>(null)
     const isRunning = ref(false)
     const elapsedTime = ref(0)
-    const currentMode = ref<SessionType>('focus')
+    const currentMode = ref<SessionType>('conversation')
+    const currentSessionId = ref<number | null>(null)
+    const participants = ref(4)
+    const hourlyRate = ref(50)
 
     // Timer interval reference
     let intervalId: number | null = null
+    let backupIntervalId: number | null = null
 
     // Computed
     const formattedTime = computed(() => {
@@ -20,94 +29,142 @@ export const useTimerStore = defineStore('timer', () => {
     })
 
     const currentCost = computed(() => {
-        if (!currentSession.value?.hourlyCost || !currentSession.value?.participants) {
+        if (!hourlyRate.value || !participants.value) {
             return 0
         }
         const hours = elapsedTime.value / 3600
-        return currentSession.value.hourlyCost * currentSession.value.participants * hours
+        return hourlyRate.value * participants.value * hours
     })
 
     // Actions
-    function startTimer(mode: SessionType, participants?: number, hourlyRate?: number) {
-        if (isRunning.value) return
-
+    async function startTimer(mode: SessionType, participantCount: number, rate: number) {
         currentMode.value = mode
-        currentSession.value = {
-            type: mode,
-            startTime: Date.now(),
-            participants,
-            hourlyCost: hourlyRate
-        }
-
-        isRunning.value = true
+        participants.value = participantCount
+        hourlyRate.value = rate
         elapsedTime.value = 0
+        isRunning.value = true
 
-        intervalId = window.setInterval(() => {
-            elapsedTime.value++
-        }, 1000)
+        // Create session in database
+        const sessionId = await saveSession({
+            type: mode,
+            startedAt: new Date(),
+            elapsedSeconds: 0,
+            participants: participantCount,
+            hourlyRate: rate,
+            totalCost: 0,
+            isCompleted: false
+        })
+        currentSessionId.value = sessionId
+
+        startInterval()
     }
 
-    function pauseTimer() {
-        if (!isRunning.value) return
-
+    async function pauseTimer() {
         isRunning.value = false
-        if (intervalId) {
-            clearInterval(intervalId)
-            intervalId = null
+        stopInterval()
+
+        // Save current progress
+        if (currentSessionId.value) {
+            await updateSession(currentSessionId.value, {
+                elapsedSeconds: elapsedTime.value,
+                totalCost: currentCost.value
+            })
         }
     }
 
     function resumeTimer() {
-        if (isRunning.value || !currentSession.value) return
+        if (isRunning.value || elapsedTime.value === 0) return
 
         isRunning.value = true
+        startInterval()
+    }
+
+    async function stopTimer() {
+        isRunning.value = false
+        stopInterval()
+
+        // Mark session as completed
+        if (currentSessionId.value) {
+            await updateSession(currentSessionId.value, {
+                elapsedSeconds: elapsedTime.value,
+                totalCost: currentCost.value
+            })
+            await completeSession(currentSessionId.value)
+            currentSessionId.value = null
+        }
+
+        // Reset state
+        elapsedTime.value = 0
+        participants.value = 4
+        hourlyRate.value = 50
+    }
+
+    async function restoreSession(session: any) {
+        currentMode.value = session.type
+        elapsedTime.value = session.elapsedSeconds
+        participants.value = session.participants
+        hourlyRate.value = session.hourlyRate
+        currentSessionId.value = session.id!
+        isRunning.value = false // Don't auto-resume (Option A)
+    }
+
+    async function loadLastSession() {
+        const session = await getIncompleteSession()
+        if (session) {
+            await restoreSession(session)
+            return session
+        }
+        return null
+    }
+
+    // Backup: auto-save every 30 seconds when running
+    function startBackupSave() {
+        backupIntervalId = window.setInterval(async () => {
+            if (isRunning.value && currentSessionId.value) {
+                await updateSession(currentSessionId.value, {
+                    elapsedSeconds: elapsedTime.value,
+                    totalCost: currentCost.value
+                })
+            }
+        }, 30000) // 30 seconds
+    }
+
+    function stopBackupSave() {
+        if (backupIntervalId) {
+            clearInterval(backupIntervalId)
+            backupIntervalId = null
+        }
+    }
+
+    function startInterval() {
         intervalId = window.setInterval(() => {
             elapsedTime.value++
         }, 1000)
+        startBackupSave()
     }
 
-    function stopTimer() {
-        pauseTimer()
-
-        if (currentSession.value) {
-            currentSession.value.endTime = Date.now()
-            currentSession.value.duration = elapsedTime.value
-            currentSession.value.totalCost = currentCost.value
+    function stopInterval() {
+        if (intervalId) {
+            clearInterval(intervalId)
+            intervalId = null
         }
-
-        // Will save to DB later
-        const completedSession = currentSession.value
-
-        // Reset state
-        currentSession.value = null
-        elapsedTime.value = 0
-
-        return completedSession
-    }
-
-    function switchMode(mode: SessionType) {
-        if (isRunning.value) {
-            stopTimer()
-        }
-        currentMode.value = mode
+        stopBackupSave()
     }
 
     return {
-        // State
-        currentSession,
         isRunning,
         elapsedTime,
         currentMode,
-
-        // Computed
+        participants,
+        hourlyRate,
+        currentSessionId,
         formattedTime,
         currentCost,
-
-        // Actions
         startTimer,
         pauseTimer,
         resumeTimer,
         stopTimer,
-        switchMode
+        restoreSession,
+        loadLastSession
     }
 })

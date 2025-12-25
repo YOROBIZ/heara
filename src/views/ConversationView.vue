@@ -51,11 +51,12 @@
         <!-- Start/Stop Button (center, primary) -->
         <button 
           v-if="!isRunning && elapsedTime === 0"
-          class="btn-primary"
+          class="btn-circular btn-circular-primary"
           @click="startConversation"
           :disabled="!hourlyRate"
         >
-          Begin
+          <Play :size="24" :stroke-width="2.5" />
+          <span class="btn-label">Begin</span>
         </button>
         <button 
           v-else
@@ -79,6 +80,24 @@
 
       <!-- Settings (only shown before start) -->
       <div v-if="!isRunning && elapsedTime === 0" class="settings-section">
+        <!-- Participants Selector -->
+        <div class="participants-selector">
+          <label class="participants-selector-label">Participants</label>
+          <div class="participants-input-group">
+            <button class="btn-adjust-large" @click="decrementParticipants" :disabled="participants <= 1">
+              <Minus :size="20" :stroke-width="2.5" />
+            </button>
+            <div class="participants-display">
+              <span class="participants-number">{{ participants }}</span>
+              <span class="participants-text">{{ participants === 1 ? 'participant' : 'participants' }}</span>
+            </div>
+            <button class="btn-adjust-large" @click="incrementParticipants" :disabled="participants >= 50">
+              <Plus :size="20" :stroke-width="2.5" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Hourly Rate Input -->
         <label class="settings-label">
           <span>Hourly rate (€)</span>
           <input 
@@ -342,7 +361,7 @@ function decrementParticipants() {
   color: var(--color-primary);
 }
 
-.btn-circular:hover {
+.btn-circular:hover:not(:disabled):not(.btn-circular-primary) {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   background: white;
@@ -359,7 +378,30 @@ function decrementParticipants() {
   letter-spacing: 0.03em;
 }
 
-/* Primary Begin Button */
+/* Primary Circular Button (Begin) */
+.btn-circular-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-circular-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.55);
+  filter: brightness(1.1);
+}
+
+.btn-circular-primary:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(1);
+}
+
+.btn-circular-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Begin Button (OLD - can be removed) */
 .btn-primary {
   min-width: 140px;
   padding: var(--space-4) var(--space-8);
@@ -452,6 +494,76 @@ function decrementParticipants() {
   border-radius: 16px;
   padding: var(--space-6);
   border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Participants Selector */
+.participants-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.participants-selector-label {
+  color: white;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.participants-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.btn-adjust-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-adjust-large:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.btn-adjust-large:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.participants-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.participants-number {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  line-height: 1;
+}
+
+.participants-text {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-1);
 }
 
 .settings-label {
@@ -493,13 +605,22 @@ function decrementParticipants() {
 }
 
 @media (max-width: 480px) {
+  .conversation-view {
+    padding: var(--space-4);
+  }
+
   .conversation-card {
     padding: var(--space-6);
     border-radius: 24px;
+    max-width: 100%;
   }
 
   .timer-display {
     font-size: 4rem;
+  }
+
+  .cost-main {
+    font-size: var(--font-size-3xl);
   }
 
   .control-bar {
@@ -511,11 +632,36 @@ function decrementParticipants() {
   .btn-primary,
   .btn-stop {
     width: 100%;
+    max-width: 280px;
   }
 
   .participants-controls {
     width: 100%;
     justify-content: center;
   }
+
+  .participants-input-group {
+    width: 100%;
+    max-width: 280px;
+  }
 }
+
+/* Tablet and medium screens */
+@media (min-width: 481px) and (max-width: 768px) {
+  .conversation-card {
+    max-width: 480px;
+  }
+}
+
+/* Ensure card fits within viewport on all devices */
+@media (max-height: 800px) {
+  .conversation-card {
+    margin: var(--space-4) auto;
+  }
+
+  .timer-hero {
+    margin: var(--space-8) 0 var(--space-6);
+  }
+}
+
 </style>

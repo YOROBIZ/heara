@@ -6,13 +6,13 @@ export type SessionType = 'focus' | 'deep-focus' | 'conversation' | 'pause'
 export interface Session {
     id?: number
     type: SessionType
-    startTime: number
-    endTime?: number
-    duration?: number
-    participants?: number
-    hourlyCost?: number
-    totalCost?: number
-    notes?: string
+    startedAt: Date
+    completedAt?: Date          // When stopped (undefined if incomplete)
+    elapsedSeconds: number
+    participants: number
+    hourlyRate: number
+    totalCost: number
+    isCompleted: boolean        // false = can be restored
 }
 
 export interface UserSettings {
@@ -36,23 +36,23 @@ export interface WeeklyStats {
 }
 
 // Database Class
-class CostClockDatabase extends Dexie {
+class HearaDatabase extends Dexie {
     sessions!: Table<Session, number>
     settings!: Table<UserSettings, number>
     weeklyStats!: Table<WeeklyStats, number>
 
     constructor() {
-        super('CostClockDB')
+        super('HearaDB')
 
         this.version(1).stores({
-            sessions: '++id, type, startTime, endTime',
+            sessions: '++id, type, isCompleted, startedAt',
             settings: '++id',
             weeklyStats: '++id, weekStart'
         })
     }
 }
 
-export const db = new CostClockDatabase()
+export const db = new HearaDatabase()
 
 // Initialize default settings if not exists
 export async function initializeSettings(): Promise<void> {
@@ -64,4 +64,60 @@ export async function initializeSettings(): Promise<void> {
             maxMeetingTime: 45 // minutes
         })
     }
+}
+
+// Session Management Helpers
+
+/**
+ * Save a new session
+ */
+export async function saveSession(session: Omit<Session, 'id'>): Promise<number> {
+    return await db.sessions.add(session)
+}
+
+/**
+ * Update an existing session
+ */
+export async function updateSession(id: number, updates: Partial<Session>): Promise<void> {
+    await db.sessions.update(id, updates)
+}
+
+/**
+ * Get the last incomplete session (if any)
+ */
+export async function getIncompleteSession(): Promise<Session | undefined> {
+    return await db.sessions
+        .where('isCompleted')
+        .equals(0) // false = 0 in IndexedDB
+        .reverse()
+        .first()
+}
+
+/**
+ * Mark a session as completed
+ */
+export async function completeSession(id: number): Promise<void> {
+    await db.sessions.update(id, {
+        isCompleted: true,
+        completedAt: new Date()
+    })
+}
+
+/**
+ * Get recent completed sessions (limit = 10 by default)
+ */
+export async function getRecentSessions(limit: number = 10): Promise<Session[]> {
+    return await db.sessions
+        .where('isCompleted')
+        .equals(1) // true = 1 in IndexedDB
+        .reverse()
+        .limit(limit)
+        .toArray()
+}
+
+/**
+ * Get session by ID
+ */
+export async function getSessionById(id: number): Promise<Session | undefined> {
+    return await db.sessions.get(id)
 }

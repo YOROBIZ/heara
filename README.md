@@ -52,10 +52,28 @@ Heara is a calm productivity companion that:
 
 All data is stored locally on your device. No servers, no tracking, no data collection.
 
+## 📅 Changelog
+
+### Epic 1 — Conversation Timer (Completed Dec 24, 2024)
+- ✅ Conversation timer with Begin/Pause/Resume/Stop
+- ✅ Real-time cost calculation (hourly rate × participants × duration)
+- ✅ Participants adjustment (+/-)
+- ✅ Observation card at 45min natural conclusion point
+- ✅ Responsive design (mobile/tablet/desktop)
+- ✅ UI aligned to approved mockup
+
+**Components**: Button, TimerDisplay, CostCounter, ParticipantsInput, ConversationView
+
+### Epic 0 — Setup & Design (Completed Dec 24, 2024)
+- ✅ Project initialized (Vue 3 + Vite + TypeScript)
+- ✅ Design system with CSS variables
+- ✅ Heara rebranding
+- ✅ Brand guidelines + UI mockups
+
 ## 📄 License
 
 MIT
 
 ---
 
-**Status**: 🚧 In Development (Day 0 - Setup)
+**Status**: ✅ Epic 0 & 1 Complete | 🚧 Epic 2 (Persistence) Next
