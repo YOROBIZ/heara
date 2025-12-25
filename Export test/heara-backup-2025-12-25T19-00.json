@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "exportedAt": "2025-12-25T19:00:48.907Z",
+  "source": "CostClock",
+  "sessions": [
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:39:50.504Z",
+      "elapsedSeconds": 3,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.16666666666666669,
+      "isCompleted": true,
+      "id": 1,
+      "completedAt": "2025-12-25T17:39:53.602Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:41:48.153Z",
+      "elapsedSeconds": 1,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.05555555555555555,
+      "isCompleted": true,
+      "id": 2,
+      "completedAt": "2025-12-25T17:41:49.238Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:45:33.498Z",
+      "elapsedSeconds": 2,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.1111111111111111,
+      "isCompleted": true,
+      "id": 3,
+      "completedAt": "2025-12-25T17:45:36.043Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:56:58.064Z",
+      "elapsedSeconds": 1,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.05555555555555555,
+      "isCompleted": true,
+      "id": 4,
+      "completedAt": "2025-12-25T17:56:59.855Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:58:26.713Z",
+      "elapsedSeconds": 3,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.16666666666666669,
+      "isCompleted": true,
+      "id": 5,
+      "completedAt": "2025-12-25T17:58:30.433Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T17:59:19.490Z",
+      "elapsedSeconds": 0,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0,
+      "isCompleted": false,
+      "id": 6
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T18:01:08.539Z",
+      "elapsedSeconds": 0,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0,
+      "isCompleted": true,
+      "id": 7,
+      "completedAt": "2025-12-25T19:00:30.348Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T18:31:08.375Z",
+      "elapsedSeconds": 20,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 1.1111111111111112,
+      "isCompleted": true,
+      "id": 8,
+      "completedAt": "2025-12-25T18:39:33.239Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T18:39:40.673Z",
+      "elapsedSeconds": 2,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.1111111111111111,
+      "isCompleted": true,
+      "id": 9,
+      "completedAt": "2025-12-25T18:39:42.968Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T18:39:44.379Z",
+      "elapsedSeconds": 0,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0,
+      "isCompleted": true,
+      "id": 10,
+      "completedAt": "2025-12-25T18:47:37.066Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T18:39:46.693Z",
+      "elapsedSeconds": 2,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.1111111111111111,
+      "isCompleted": true,
+      "id": 11,
+      "completedAt": "2025-12-25T18:39:52.866Z"
+    },
+    {
+      "type": "conversation",
+      "startedAt": "2025-12-25T19:00:35.472Z",
+      "elapsedSeconds": 9,
+      "participants": 4,
+      "hourlyRate": 50,
+      "totalCost": 0.5,
+      "isCompleted": true,
+      "id": 12,
+      "completedAt": "2025-12-25T19:00:45.219Z"
+    }
+  ]
+}

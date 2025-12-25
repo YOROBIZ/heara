@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+// Timer Store - Manages timer state and persistence
 import { ref, computed } from 'vue'
 import type { SessionType } from '@/database'
 import {
@@ -99,25 +100,32 @@ export const useTimerStore = defineStore('timer', () => {
         hourlyRate.value = 50
     }
 
+    // Restore session state
     async function restoreSession(session: any) {
+        console.log('[TimerStore] Restoring session:', session)
         currentMode.value = session.type
         elapsedTime.value = session.elapsedSeconds
         participants.value = session.participants
         hourlyRate.value = session.hourlyRate
-        currentSessionId.value = session.id!
+        currentSessionId.value = session.id
         isRunning.value = false // Don't auto-resume (Option A)
+        console.log('[TimerStore] Session restored. ID:', currentSessionId.value, 'Elapsed:', elapsedTime.value)
     }
 
+    // Load last incomplete session on mount
     async function loadLastSession() {
+        console.log('[TimerStore] Loading last session...')
         const session = await getIncompleteSession()
         if (session) {
+            console.log('[TimerStore] Found incomplete session:', session)
             await restoreSession(session)
             return session
         }
+        console.log('[TimerStore] No incomplete session found')
         return null
     }
 
-    // Backup: auto-save every 30 seconds when running
+    // Backup: auto-save every 5 seconds when running
     function startBackupSave() {
         backupIntervalId = window.setInterval(async () => {
             if (isRunning.value && currentSessionId.value) {
@@ -126,7 +134,7 @@ export const useTimerStore = defineStore('timer', () => {
                     totalCost: currentCost.value
                 })
             }
-        }, 30000) // 30 seconds
+        }, 5000) // 5 seconds
     }
 
     function stopBackupSave() {

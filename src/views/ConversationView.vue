@@ -158,10 +158,71 @@
           <span>Saved on this device</span>
         </div>
       </div>
+
+      <!-- Data Management (Only shown when stopped) -->
+      <div v-if="!isRunning && elapsedTime === 0" class="data-management-section">
+        <div class="divider"></div>
+        <h3 class="data-title">Data Management</h3>
+        <div class="data-actions">
+          <button class="data-btn" @click="dataStore.exportData" :disabled="dataStore.isExporting">
+            <Download :size="14" />
+            <span>{{ dataStore.isExporting ? 'Exporting...' : 'Export Backup' }}</span>
+          </button>
+          
+          <div class="import-wrapper">
+            <input 
+              type="file" 
+              ref="fileInput" 
+              accept=".json" 
+              class="hidden-input"
+              @change="handleImport"
+            >
+            <button class="data-btn secondary" @click="triggerFileInput" :disabled="dataStore.isImporting">
+              <Upload :size="14" />
+              <span>{{ dataStore.isImporting ? 'Restoring...' : 'Import Backup' }}</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Feedback Messages -->
+        <div v-if="dataStore.error" class="data-message error">
+          {{ dataStore.error }}
+        </div>
+        <div v-if="dataStore.successMessage" class="data-message success">
+          {{ dataStore.successMessage }}
+        </div>
+      </div>
+
+      <!-- Signature -->
+      <div class="app-signature">
+        by Yoro Ndiaye Software developper
+      </div>
     </div>
 
     <!-- PWA Install Prompt -->
     <InstallPrompt />
+    <!-- Import Confirmation Modal -->
+    <div v-if="showImportModal" class="history-overlay" @click.self="cancelImport">
+      <div class="confirmation-modal">
+        <div class="confirmation-content">
+          <div class="warning-icon">
+            <AlertTriangle :size="48" />
+          </div>
+          <h3 class="confirmation-title">Replace All Data?</h3>
+          <p class="confirmation-text">
+            This action will <strong>permanently delete</strong> all current sessions and replace them with the backup.
+          </p>
+          <p class="confirmation-subtext">This cannot be undone.</p>
+          
+          <div class="confirmation-actions">
+            <button class="btn-cancel" @click="cancelImport">Cancel</button>
+            <button class="btn-confirm" @click="confirmImport">
+              Replace Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -169,14 +230,46 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
-import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, BarChart2 } from 'lucide-vue-next'
+import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, BarChart2, Download, Upload, AlertTriangle } from 'lucide-vue-next'
 import { completeSession } from '@/database'
 import SessionHistory from '@/components/SessionHistory.vue'
 import WeeklySummary from '@/components/WeeklySummary.vue'
 import InstallPrompt from '@/components/InstallPrompt.vue'
+import { useDataStore } from '@/stores/dataStore'
 
 const timerStore = useTimerStore()
+const dataStore = useDataStore()
 const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const showImportModal = ref(false)
+const pendingImportFile = ref<File | null>(null)
+
+function triggerFileInput() {
+  fileInput.value?.click()
+}
+
+function handleImport(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    pendingImportFile.value = target.files[0]
+    showImportModal.value = true
+    target.value = '' // Reset input
+  }
+}
+
+function confirmImport() {
+  if (pendingImportFile.value) {
+    dataStore.importData(pendingImportFile.value)
+    showImportModal.value = false
+    pendingImportFile.value = null
+  }
+}
+
+function cancelImport() {
+  showImportModal.value = false
+  pendingImportFile.value = null
+}
 
 // Local state
 const participants = ref(4)
@@ -366,6 +459,7 @@ function closeInsights() {
   text-align: center;
   margin-bottom: var(--space-6);
   position: relative;
+  padding-top: var(--space-8); /* Increased from space-2 to space-8 for more room */
 }
 
 .header-actions {
@@ -375,7 +469,20 @@ function closeInsights() {
   display: flex;
   gap: var(--space-2);
   align-items: center;
-  z-index: 10;
+  z-index: 20;
+}
+
+.brand {
+  /* Ensure brand has significant space from top buttons */
+  margin-top: var(--space-4); 
+}
+
+.brand-name {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  margin-bottom: var(--space-1);
+  letter-spacing: -0.01em;
 }
 
 .history-btn {
@@ -398,14 +505,6 @@ function closeInsights() {
   background: rgba(255, 255, 255, 0.15);
   color: white;
   transform: translateY(-1px);
-}
-
-.brand-name {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: white;
-  margin-bottom: var(--space-1);
-  letter-spacing: -0.01em;
 }
 
 .brand-tagline {
@@ -498,17 +597,20 @@ function closeInsights() {
 .btn-dismiss {
   padding: var(--space-2) var(--space-4);
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-base);
-  text-decoration: underline;
 }
 
 .btn-dismiss:hover {
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Timer Hero - Massive focal point */
@@ -838,6 +940,82 @@ function closeInsights() {
   gap: var(--space-2);
 }
 
+/* Data Management Styles */
+.data-management-section {
+  margin-top: var(--space-6);
+  text-align: center;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: var(--space-4) 0;
+}
+
+.data-title {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: var(--space-3);
+  font-weight: var(--font-weight-semibold);
+}
+
+.data-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.data-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: var(--space-3) var(--space-4);
+  color: white;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.data-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.data-message {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 4px;
+}
+
+.data-message.success {
+  color: #50ffa0;
+  background: rgba(80, 255, 160, 0.1);
+}
+
+.data-message.error {
+  color: #ff6b6b;
+  background: rgba(255, 80, 80, 0.1);
+}
+
 @media (max-width: 480px) {
   .conversation-view {
     padding: var(--space-4);
@@ -895,5 +1073,102 @@ function closeInsights() {
   .timer-hero {
     margin: var(--space-8) 0 var(--space-6);
   }
+}
+/* Confirmation Modal */
+.confirmation-modal {
+  background: rgba(30, 30, 40, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: var(--space-8);
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.warning-icon {
+  color: #ff6b6b;
+  margin-bottom: var(--space-4);
+  display: flex;
+  justify-content: center;
+}
+
+.confirmation-title {
+  color: white;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+.confirmation-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.confirmation-subtext {
+  color: #ff6b6b;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.confirmation-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.btn-confirm {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: var(--space-3);
+  border-radius: 12px;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-confirm:hover {
+  background: #ff6b81;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-3);
+  border-radius: 12px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+/* Signature */
+.app-signature {
+  text-align: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: var(--space-8);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 </style>
