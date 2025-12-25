@@ -118,6 +118,17 @@ export async function getRecentSessions(limit: number = 10): Promise<Session[]> 
 }
 
 /**
+ * Get sessions within a specific date range
+ */
+export async function getSessionsForDateRange(startDate: Date, endDate: Date): Promise<Session[]> {
+    const sessions = await db.sessions.toArray()
+    return sessions.filter(s => {
+        const date = s.startedAt
+        return s.isCompleted && date >= startDate && date <= endDate
+    })
+}
+
+/**
  * Get session by ID
  */
 export async function getSessionById(id: number): Promise<Session | undefined> {

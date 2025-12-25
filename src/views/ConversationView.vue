@@ -10,6 +10,16 @@
       </div>
     </div>
 
+    <!-- Insights Modal Overlay -->
+    <div v-if="showInsights" class="history-overlay" @click="closeInsights">
+      <div class="history-modal" @click.stop>
+        <button class="history-close" @click="closeInsights" aria-label="Close insights">
+          <X :size="20" :stroke-width="2" />
+        </button>
+        <WeeklySummary />
+      </div>
+    </div>
+
     <!-- Main Card (Glassmorphism with deep shadow) -->
     <div class="conversation-card">
       <!-- Header -->
@@ -18,10 +28,15 @@
           <h1 class="brand-name">Heara</h1>
           <p class="brand-tagline">Hear what truly matters</p>
         </div>
-        <button class="history-btn" @click="showHistory = true" aria-label="View history">
-          <Clock :size="18" :stroke-width="2" />
-          <span>History</span>
-        </button>
+        <div class="header-actions">
+          <button class="history-btn" @click="showInsights = true" aria-label="View insights" title="Weekly Insights">
+            <Sparkles :size="16" :stroke-width="2" />
+          </button>
+          <button class="history-btn" @click="showHistory = true" aria-label="View history">
+            <Clock :size="18" :stroke-width="2" />
+            <span>History</span>
+          </button>
+        </div>
       </div>
 
       <!-- Mode Indicator -->
@@ -151,9 +166,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timerStore'
 import { storeToRefs } from 'pinia'
-import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X } from 'lucide-vue-next'
+import { MessageCircle, Pause, Play, Minus, Plus, HardDrive, Clock, X, Sparkles } from 'lucide-vue-next'
 import { completeSession } from '@/database'
 import SessionHistory from '@/components/SessionHistory.vue'
+import WeeklySummary from '@/components/WeeklySummary.vue'
 
 const timerStore = useTimerStore()
 const { isRunning, elapsedTime, currentSessionId } = storeToRefs(timerStore)
@@ -164,6 +180,7 @@ const hourlyRate = ref<number | null>(50)
 const showRestoreBanner = ref(false)
 const restoredSessionId = ref<number | null>(null)
 const showHistory = ref(false)
+const showInsights = ref(false)
 
 // Load last session on mount
 onMounted(async () => {
@@ -253,6 +270,10 @@ async function dismissRestore() {
 function closeHistory() {
   showHistory.value = false
 }
+
+function closeInsights() {
+  showInsights.value = false
+}
 </script>
 
 <style scoped>
@@ -341,6 +362,15 @@ function closeHistory() {
   text-align: center;
   margin-bottom: var(--space-6);
   position: relative;
+}
+
+.header-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
 }
 
 .history-btn {
