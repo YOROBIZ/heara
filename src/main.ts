@@ -17,5 +17,7 @@ const updateSW = registerSW({
     },
 })
 
+console.log('[PWA] Service Worker registered', updateSW)
+
 app.use(pinia)
 app.mount('#app')
