@@ -1016,19 +1016,34 @@ function closeInsights() {
   background: rgba(255, 80, 80, 0.1);
 }
 
+/* Mobile Optimization (Portrait) */
 @media (max-width: 480px) {
   .conversation-view {
-    padding: var(--space-4);
+    padding: var(--space-2);
+    align-items: flex-start; /* Allow scrolling if needed */
+    height: auto;
+    min-height: 100vh;
   }
 
   .conversation-card {
-    padding: var(--space-6);
+    padding: var(--space-5);
     border-radius: 24px;
     max-width: 100%;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-header {
+    padding-top: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .timer-hero {
+    margin: var(--space-6) 0 var(--space-4);
   }
 
   .timer-display {
-    font-size: 4rem;
+    font-size: clamp(3rem, 12vw, 4.5rem); /* Responsive font size */
   }
 
   .cost-main {
@@ -1036,44 +1051,96 @@ function closeInsights() {
   }
 
   .control-bar {
-    flex-direction: column;
     gap: var(--space-3);
   }
 
-  .btn-circular,
+  /* Stack controls but keep them usable */
+  .btn-circular {
+    width: 56px;
+    height: 56px;
+  }
+  
   .btn-stop {
     width: 100%;
-    max-width: 280px;
+    padding: var(--space-3);
+  }
+}
+
+/* Landscape Optimization (Mobile) */
+@media (max-height: 600px) and (orientation: landscape) {
+  .conversation-view {
+    padding: var(--space-2);
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-start;
   }
 
-  .participants-controls {
-    width: 100%;
-    justify-content: center;
+  .conversation-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    max-width: 600px;
+    align-items: center;
   }
 
-  .participants-input-group {
-    width: 100%;
-    max-width: 280px;
+  .card-header {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+    padding-top: var(--space-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  
+  .header-actions {
+    position: static;
+  }
+  
+  .brand {
+    margin-top: 0;
+  }
+
+  .timer-hero {
+    margin: 0;
+    text-align: left;
+  }
+
+  .timer-display {
+    font-size: 3rem;
+  }
+
+  .cost-display {
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .control-bar {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+  
+  .mode-bar, .restore-banner, .observation-card, .settings-section, .data-management-section, .app-signature {
+    grid-column: 1 / -1;
   }
 }
 
 /* Tablet and medium screens */
 @media (min-width: 481px) and (max-width: 768px) {
   .conversation-card {
-    max-width: 480px;
+    max-width: 520px;
   }
 }
 
 /* Ensure card fits within viewport on all devices */
 @media (max-height: 800px) {
   .conversation-card {
-    margin: var(--space-4) auto;
-  }
-
-  .timer-hero {
-    margin: var(--space-8) 0 var(--space-6);
+    margin: var(--space-2) auto;
   }
 }
+
 /* Confirmation Modal */
 .confirmation-modal {
   background: rgba(30, 30, 40, 0.95);
